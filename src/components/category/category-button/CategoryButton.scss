@@ -1,0 +1,22 @@
+$category-background-color: #293462;
+$category-text-color: #1cd6ce;
+
+.category-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 135px;
+  height: 135px;
+  background-color: $category-background-color;
+  border: 3px solid #D61C4E;
+  border-radius: 5%;
+
+  &__text {
+    text-align: center;
+    color: $category-text-color;
+  }
+}
+
+
+
