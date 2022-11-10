@@ -1,9 +1,7 @@
-import CategoryButton from "../components/category/category-button/CategoryButton"
+import CategoriesContainer from "../components/category/category-container/CategoriesContainer";
 
 function Main() {
-  return (
-    <CategoryButton></CategoryButton>
-  );
+  return <CategoriesContainer></CategoriesContainer>;
 }
 
 export default Main;
