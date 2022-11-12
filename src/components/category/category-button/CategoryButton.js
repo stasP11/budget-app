@@ -3,7 +3,7 @@ import './CategoryButton.scss'
 function CategoryButton(prop) {
 
   function changeStatus(){
-    prop.watchStatus(true)
+    prop.watchStatus(prop.categoryName)
   }
 
   return (
