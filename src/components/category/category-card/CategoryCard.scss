@@ -1,6 +1,23 @@
 .category-card {
-    &__cancel-icon {
+  width: 450px;
+  background-color: antiquewhite;
+
+  &__header {
+    display: flex;
+    justify-content: end;
+  }
+  &__cancel-icon {
     width: 25px;
     height: 25px;
+  }
+}
+
+.category-item {
+  display: flex;
+  flex-wrap: wrap;
+
+  &__count-container {
+    display: flex;
+    align-items: center;
   }
 }

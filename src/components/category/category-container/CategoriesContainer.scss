@@ -1,9 +1,30 @@
-.categories{
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: auto;
-    margin-right: auto;
-    width: 75%;
-    height: auto;
-    border: 1px solid darkgray;
+.categories {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  z-index: 1;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+  height: auto;
+  border: 1px solid darkgray;
+
+  .unactivated {
+    z-index: 1;
+    .card {
+      display: none;
+    }
+  }
+  .activated {
+    z-index: 2;
+    .card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-color: red;
+    }
+  }
 }

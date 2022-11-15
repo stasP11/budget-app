@@ -51,45 +51,50 @@ const userData = getUserData();
 
 function Category(data) {
   const { categories } = data.userData;
-  const [isWatchedStatus, setIsWatchedStatus] = useState(null);
+  const [activatedCategoryName, setIActivatedCategoryName] = useState(null);
 
-  function updatedWatchedStatus(value) {
-    setIsWatchedStatus((currentStatus) => (currentStatus = value));
+  function updatedWatchedStatus(name) {
+    setIActivatedCategoryName((cardName) => (cardName = name));
   }
 
-  function isWatchedCard(props, updatedState){
-    return props == updatedState? "watched": "not-watched"
+  function isActivatedCard(props, updatedState) {
+    return props == updatedState ? "activated" : "unactivated";
   }
 
   const category = categories.map((categoriesObj) => {
     const { categoryName, categoryItems } = categoriesObj;
     return (
-      <div key={categoryName} className>
-        <div>
-        <CategoryButton
-          categoryName={categoryName}
-          watchStatus={updatedWatchedStatus}
-        />
+      <div
+        key={categoryName}
+        className={isActivatedCard(categoryName, activatedCategoryName)}
+      >
+        <div className="button">
+          <CategoryButton
+            categoryName={categoryName}
+            watchStatus={updatedWatchedStatus}
+          />
         </div>
-        <div className= {isWatchedCard(categoryName, isWatchedStatus)}>
-        <CategoryCard
-          categoryItems={categoryItems}
-          categoryName={categoryName}
-          watchStatus={updatedWatchedStatus}
-        />
-        </div>
+
+        {categoryName === activatedCategoryName ? (
+          <div className="card">
+            <CategoryCard
+              categoryItems={categoryItems}
+              categoryName={categoryName}
+              watchStatus={updatedWatchedStatus}
+            />
+          </div>
+        ) : null}
       </div>
     );
   });
 
-  console.log(isWatchedStatus);
-  return <div>{category}</div>;
+  return <>{category}</>;
 }
 
 function CategoriesContainer() {
   return (
     <div className="categories">
-      <Category userData={userData}/>
+      <Category userData={userData} />
     </div>
   );
 }
