@@ -1,24 +1,21 @@
 import { useState, useRef } from "react";
 import "./CategoryCard.scss";
 import cancelIcon from "../../../assets/icons/cancel-svgrepo-com.svg";
+import CategoryCardItem from './CategoryCardItem'
 
 function CategoryCardTemplate(prop) {
   let nameRef = useRef();
   let valueRef = useRef();
 
-  const response = {};
-
-
-
-  function sendData() {
-    response.name = nameRef.current.value;
-    response.value = valueRef.current.value;
-    //there i shoud to send data to parent
-    prop.isClicked();
+  function sendUpdatedData() {
+    prop.isClicked({
+      name: nameRef.current.value,
+      value: valueRef.current.value,
+    });
   }
 
   function cancelCanges() {
-    prop.isClicked();
+    prop.isClicked(null);
   }
 
   return (
@@ -33,7 +30,7 @@ function CategoryCardTemplate(prop) {
           <input ref={valueRef}></input>
         </div>
         <div className="item-creator__action">
-          <button onClick={sendData} className="item-creator__save">
+          <button onClick={sendUpdatedData} className="item-creator__save">
             Save
           </button>
           <button onClick={cancelCanges} className="item-creator__cancel">
@@ -47,69 +44,44 @@ function CategoryCardTemplate(prop) {
 
 function CreaterCategoryCardItem() {
   const [isClicked, setIsClicked] = useState(false);
+  const [itemData, setItemData] = useState({});
 
-  function updateIsClicked() {
+  function onClickAddButton() {
     setIsClicked((currentisClicked) => (currentisClicked = !currentisClicked));
   }
+  function onAddNewItem(prop) {
+    onClickAddButton();
+    // there we shoud send data
+    setItemData(prop);
+    // when we finish clean this
+    // setItemData(null)
+  }
+
+  console.log(itemData, "final result");
 
   return (
     <div className="creator-category">
       {isClicked ? (
-        <CategoryCardTemplate isClicked={updateIsClicked} />
+        <CategoryCardTemplate isClicked={onAddNewItem} />
       ) : (
         <div className="creator-category__add-button">
-          <p onClick={updateIsClicked}>|+|</p>
+          <p onClick={onClickAddButton}>|+|</p>
         </div>
       )}
     </div>
   );
 }
 
-
-
-
-
-
-
-function CategoryCardItem(prop) {
-  const { currency, name, value } = prop.itemData;
-  let valueRef = useRef();
-
-  function getUpdatedValue(){
-    console.log('some actions')   
-    /* 
-    prop.onChangeCategoryData({
-      name,
-      value: valueRef.current.value
-    })
-    */
-  }
-
-  return (
-    <div className="category-item">
-      <p className="category-item__name">{name}</p>
-      <div className="category-item__count-container">
-        <button className="category-item__count-decrease">-</button>
-        <div>
-          <input className="category-item__count" ref={valueRef} onChange={getUpdatedValue} defaultValue={value} />
-          <span className="category-item__currency">{currency}</span>
-        </div>
-        <button className="category-item__count-increase">+</button>
-      </div>
-    </div>
-  );
-}
-
 function CategoryCard(prop) {
   const { categoryItems } = prop;
-  const [ updatedCategories, setUpdatedCategories] = useState({})
+  const [updatedCategories, setUpdatedCategories] = useState([]);
 
 
-  function handleCategotiesChanges(value){
-   console.log(value)
+  function handleCategotiesChanges(value) {
+    console.log(value, 'updated value');
+    const { name } = value;
+    setUpdatedCategories((c) => [...c, value]);
   }
-
-  console.log(updatedCategories);
 
   return (
     <div className="category-card">
@@ -124,9 +96,15 @@ function CategoryCard(prop) {
       </div>
 
       <div className="category-card__items-container">
+
         {categoryItems.map((item) => (
-          <CategoryCardItem itemData={item} onChangeCategoryData={handleCategotiesChanges}/>
+          <CategoryCardItem
+            itemData={item}
+            onChangeCategoryData={handleCategotiesChanges}
+          />
         ))}
+
+
         <CreaterCategoryCardItem />
       </div>
     </div>
