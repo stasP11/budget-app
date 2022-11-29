@@ -1,48 +1,53 @@
-import './CategoryCard.scss'
-import cancelIcon from '../../../assets/icons/cancel-svgrepo-com.svg';
-
-function CategoryCardHead(){
-    return (
-        <div className ="category-card__head">
-          <p className ="category-card__close-icon">go back</p>
-        </div>
-      );
-}
-
-function CategoryCardSaveButton(){
-    return (
-    <div className ="category-card__save-button"> Save Result</div>
-      );
-}
+import { useState, useRef } from "react";
+import "./CategoryCard.scss";
+import cancelIcon from "../../../assets/icons/cancel-svgrepo-com.svg";
+import CategoryCardItem from './card-item/CategoryCardItem'
+import CreaterCategoryCardItem from './card-item/CreaterCategoryCardItem'
 
 
-function CategoryCardItem(){
-    return (
-        <div className ="category-item">
-        <p className ="category-item__name">Some name</p>
-        <div className="category-item__count">
-           <button>-</button>
-           <input defaultValue="0"/>
-           <button>+</button>
-        </div>
-        </div>
-      );
-}
+
+
+
+
+
 
 
 
 function CategoryCard(prop) {
-    return (
-      <div className ="category-card" onClick={()=>prop.watchStatus(false)}>
-        <div><img className="category-card__cancel-icon" src={cancelIcon}></img></div>
-    <CategoryCardHead></CategoryCardHead>
-    <div className ="category-card__cards-container">
-    <CategoryCardSaveButton></CategoryCardSaveButton>
-    </div>
-    <CategoryCardItem></CategoryCardItem>
-      </div>
-    );
+  const { categoryItems } = prop;
+  const [updatedCategories, setUpdatedCategories] = useState([]);
+
+
+  function handleCategotiesChanges(value) {
+    console.log(value, 'updated value');
+    const { name } = value;
+    setUpdatedCategories((c) => [...c, value]);
   }
-  
-  export default CategoryCard;
-  
+
+  return (
+    <div className="category-card">
+      <div className="category-card__header">
+        <img
+          className="category-card__cancel-icon"
+          onClick={() => {
+            prop.watchStatus(null);
+          }}
+          src={cancelIcon}
+        ></img>
+      </div>
+
+      <div className="category-card__items-container">
+
+        {categoryItems.map((item) => (
+          <CategoryCardItem
+            itemData={item}
+            onChangeCategoryData={handleCategotiesChanges}
+          />
+        ))}
+        <CreaterCategoryCardItem />
+      </div>
+    </div>
+  );
+}
+
+export default CategoryCard;

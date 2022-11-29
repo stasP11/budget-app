@@ -1,0 +1,31 @@
+.card-item {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: "Nerko One", cursive;
+}
+
+.data-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-self: center;
+
+  padding-left: 10px;
+
+  > input {
+    text-align: center;
+    border: none;
+    font-family: "Nerko One", cursive;
+  }
+}
+
+.creator-category {
+font-family: "Nerko One", cursive;
+.item-creator{
+  &__ctegory-name, &__count {
+    font-family: "Patrick Hand", cursive;
+    >input{
+        font-family: "Nerko One", cursive;
+    }
+  }
+}
+}

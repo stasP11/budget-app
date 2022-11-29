@@ -22,6 +22,21 @@ const usersData = [
           },
         ],
       },
+      {
+        categoryName: "Transport",
+        categoryItems: [
+          {
+            name: "Taxi",
+            value: 35,
+            currency: "EUR",
+          },
+          {
+            name: "Tram",
+            value: 0.54,
+            currency: "EUR",
+          },
+        ],
+      },
     ],
   },
 ];
@@ -36,31 +51,44 @@ const userData = getUserData();
 
 function Category(data) {
   const { categories } = data.userData;
-  const [isWatchedStatus, setIsWatchedStatus] = useState(false);
+  const [activatedCategoryName, setIActivatedCategoryName] = useState(null);
 
-  function updatedWatchedStatus(value) {
-    setIsWatchedStatus((currentStatus) => (currentStatus = value));
+  function updatedWatchedStatus(name) {
+    setIActivatedCategoryName((cardName) => (cardName = name));
+  }
+
+  function isActivatedCard(props, updatedState) {
+    return props == updatedState ? "activated" : "unactivated";
   }
 
   const category = categories.map((categoriesObj) => {
     const { categoryName, categoryItems } = categoriesObj;
     return (
-      <div key={categoryName}>
-        <CategoryButton
-          categoryName={categoryName}
-          watchStatus={updatedWatchedStatus}
-        />
-        <CategoryCard
-          categoryItems={categoryItems}
-          categoryName={categoryName}
-          watchStatus={updatedWatchedStatus}
-        />
+      <div
+        key={categoryName}
+        className={isActivatedCard(categoryName, activatedCategoryName)}
+      >
+        <div className="button">
+          <CategoryButton
+            categoryName={categoryName}
+            watchStatus={updatedWatchedStatus}
+          />
+        </div>
+
+        {categoryName === activatedCategoryName ? (
+          <div className="card">
+            <CategoryCard
+              categoryItems={categoryItems}
+              categoryName={categoryName}
+              watchStatus={updatedWatchedStatus}
+            />
+          </div>
+        ) : null}
       </div>
     );
   });
 
-  console.log(isWatchedStatus);
-  return <div>{category}</div>;
+  return <>{category}</>;
 }
 
 function CategoriesContainer() {
