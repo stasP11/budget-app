@@ -53,7 +53,7 @@ function Category(data) {
   const { categories } = data.userData;
   const [activatedCategoryName, setIActivatedCategoryName] = useState(null);
 
-  function updatedWatchedStatus(name) {
+  function handleWatchedStatus(name) {
     setIActivatedCategoryName((cardName) => (cardName = name));
   }
 
@@ -71,7 +71,7 @@ function Category(data) {
         <div className="button">
           <CategoryButton
             categoryName={categoryName}
-            watchStatus={updatedWatchedStatus}
+            onWatchStatusChange={handleWatchedStatus}
           />
         </div>
 
@@ -80,7 +80,7 @@ function Category(data) {
             <CategoryCard
               categoryItems={categoryItems}
               categoryName={categoryName}
-              watchStatus={updatedWatchedStatus}
+              onWatchStatusChange={handleWatchedStatus}
             />
           </div>
         ) : null}

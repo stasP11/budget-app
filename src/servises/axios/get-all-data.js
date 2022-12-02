@@ -48,7 +48,7 @@ const userData2 = {
   ],
 };
 
-export async function getAllData() {
+export default async function getAllData() {
     const result1 = await new Promise((resolve) =>
       setTimeout(() => resolve(userData2), 100)
     );

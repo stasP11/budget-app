@@ -19,13 +19,14 @@
 }
 
 .creator-category {
-font-family: "Nerko One", cursive;
-.item-creator{
-  &__ctegory-name, &__count {
-    font-family: "Patrick Hand", cursive;
-    >input{
+  font-family: "Patrick Hand", cursive;
+  .item-creator {
+    &__ctegory-name,
+    &__count {
+      font-family: "Patrick Hand", cursive;
+      > input {
         font-family: "Nerko One", cursive;
+      }
     }
   }
-}
 }

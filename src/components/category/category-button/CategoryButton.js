@@ -1,14 +1,15 @@
-import './CategoryButton.scss'
+import "./CategoryButton.scss";
 
 function CategoryButton(prop) {
+  const { onWatchStatusChange, categoryName } = prop;
 
-  function changeStatus(){
-    prop.watchStatus(prop.categoryName)
+  function changeStatus() {
+    onWatchStatusChange(categoryName);
   }
 
   return (
-    <div className ="category-button" onClick={changeStatus}>
-      <p className ="category-button__text">{prop.categoryName}</p>
+    <div className="category-button" onClick={changeStatus}>
+      <p className="category-button__text">{categoryName}</p>
     </div>
   );
 }
