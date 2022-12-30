@@ -21,9 +21,12 @@ function Category(data) {
   }, []);
 
   function handleWatchedStatus(name) {
+<<<<<<< HEAD
     name
       ? setDataInSessionStorage("openedCategory", name)
       : removeDataFromSessionStorage("openedCategory");
+=======
+>>>>>>> master
     setIActivatedCategoryName((cardName) => (cardName = name));
   }
 
