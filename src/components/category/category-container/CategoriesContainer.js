@@ -1,68 +1,43 @@
 import CategoryButton from "../category-button/CategoryButton";
 import CategoryCard from "../category-card/CategoryCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CategoriesContainer.scss";
-
-const usersData = [
-  {
-    time: "09.11.2021",
-    categories: [
-      {
-        categoryName: "Food",
-        categoryItems: [
-          {
-            name: "meat",
-            value: 15,
-            currency: "EUR",
-          },
-          {
-            name: "pasta",
-            value: 2.54,
-            currency: "EUR",
-          },
-        ],
-      },
-      {
-        categoryName: "Transport",
-        categoryItems: [
-          {
-            name: "Taxi",
-            value: 35,
-            currency: "EUR",
-          },
-          {
-            name: "Tram",
-            value: 0.54,
-            currency: "EUR",
-          },
-        ],
-      },
-    ],
-  },
-];
-
-//
-// import getNeedData
-
-function getUserData() {
-  return usersData[0];
-}
-const userData = getUserData();
+import { store } from "../../../store/index";
+import {
+  setDataInSessionStorage,
+  getDataFromSessionStorage,
+  removeDataFromSessionStorage,
+} from "../../../servises/helpers-functions/sessionStorage/index";
 
 function Category(data) {
-  const { categories } = data.userData;
   const [activatedCategoryName, setIActivatedCategoryName] = useState(null);
+  const { time, categories } = data?.userData;
+  const openedCategoryName = getDataFromSessionStorage("openedCategory");
+
+  useEffect(() => {
+    if (openedCategoryName) {
+      setIActivatedCategoryName(openedCategoryName);
+    }
+  }, []);
 
   function handleWatchedStatus(name) {
+    name
+      ? setDataInSessionStorage("openedCategory", name)
+      : removeDataFromSessionStorage("openedCategory");
     setIActivatedCategoryName((cardName) => (cardName = name));
   }
 
   function isActivatedCard(props, updatedState) {
-    return props == updatedState ? "activated" : "unactivated";
+    if (props == updatedState) {
+      return "activated";
+    }
+    if (openedCategoryName == props) {
+      return "activated";
+    } else return "unactivated";
   }
 
-  const category = categories.map((categoriesObj) => {
-    const { categoryName, categoryItems } = categoriesObj;
+  const categ = categories.map((category) => {
+    const { id, categoryName, categoryItems } = category;
     return (
       <div
         key={categoryName}
@@ -75,7 +50,7 @@ function Category(data) {
           />
         </div>
 
-        {categoryName === activatedCategoryName ? (
+        {activatedCategoryName ? (
           <div className="card">
             <CategoryCard
               categoryItems={categoryItems}
@@ -88,15 +63,33 @@ function Category(data) {
     );
   });
 
-  return <>{category}</>;
+  return <>{categ}</>;
 }
 
 function CategoriesContainer() {
+  const userData2 = useUserData();
+
+  function ReturnRight() {
+    let result;
+    if (userData2?.categories && userData2?.time) {
+      result = <Category userData={userData2} />;
+    }
+    return <>{result}</>;
+  }
+
   return (
     <div className="categories">
-      <Category userData={userData} />
+      <ReturnRight />
     </div>
   );
 }
 
 export default CategoriesContainer;
+
+function useUserData() {
+  const [state, setState] = useState({});
+  store.subscribe(() => {
+    setState(store.getState()?.userData);
+  });
+  return state;
+}
