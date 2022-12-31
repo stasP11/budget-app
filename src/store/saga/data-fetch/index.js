@@ -1,10 +1,11 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import getAllData from "../../../servises/axios/get-all-data";
+import { allUserData, getAllData } from "../../../servises/axios/get-all-data";
 
 // worker
+//allUserData.getUserData(payload) 
 function* fetchUserData(action) {
   try {
-    const userData = yield call(getAllData, action.payload);
+    const userData = yield call(allUserData.getUserData, action.payload);
     yield put({ type: "USER_DATA_FETCH", payload: userData });
   } catch (e) {
     yield put({ type: "USER_FETCH_FAILED", message: e.message });
@@ -17,6 +18,6 @@ export function* watchFetchUserData() {
 }
 
 //async action
-export function asyncFetchUserDataAction() {
-  return { type: "USER_DATA_FETCH_REQUESTED" };
+export function asyncFetchUserDataAction(userId) {
+  return { type: "USER_DATA_FETCH_REQUESTED", payload: userId };
 }

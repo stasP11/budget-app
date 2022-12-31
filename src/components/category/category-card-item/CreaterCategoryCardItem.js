@@ -2,18 +2,19 @@ import { useState, useRef } from "react";
 import "./CardItem.scss";
 
 function CategoryCardTemplate(prop) {
+  const {onItemCreation} = prop
   let nameRef = useRef();
   let valueRef = useRef();
 
   function sendUpdatedData() {
-    prop.isClicked({
+    onItemCreation({
       name: nameRef.current.value,
-      value: valueRef.current.value,
+      value: Number(valueRef.current.value) || 0,
     });
   }
 
   function cancelCanges() {
-    prop.isClicked(null);
+    onItemCreation(null);
   }
 
   return (
@@ -40,24 +41,27 @@ function CategoryCardTemplate(prop) {
   );
 }
 
-function CreaterCategoryCardItem() {
+function CreaterCategoryCardItem(prop) {
+  const { onCreateItem } = prop
   const [isClicked, setIsClicked] = useState(false);
   const [itemData, setItemData] = useState({});
 
   function onClickAddButton() {
     setIsClicked((currentisClicked) => (currentisClicked = !currentisClicked));
   }
-  function onAddNewItem(prop) {
-    onClickAddButton();
-    // there we shoud send data
-    setItemData(prop);
-    // when we finish clean this
-    // setItemData(null)
+
+  function handleCreationItem(value){
+    if(value){
+    onCreateItem(value)
+    } else {
+      onClickAddButton()
+    }
   }
+
   return (
     <div className="creator-category">
       {isClicked ? (
-        <CategoryCardTemplate isClicked={onAddNewItem} />
+        <CategoryCardTemplate onItemCreation={handleCreationItem} />
       ) : (
         <div className="creator-category__add-button">
           <p onClick={onClickAddButton}>|+|</p>
