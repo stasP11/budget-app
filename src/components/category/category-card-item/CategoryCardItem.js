@@ -1,19 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useCallback } from "react";
 import "./CardItem.scss";
 
 function CategoryDataCounter(prop) {
-  const { categoryData, onChangeCategoryData, onResetUpdate, resetUpdateStatus } = prop;
+  const {
+    categoryData,
+    onChangeCategoryData,
+    onResetUpdate,
+    resetUpdateStatus,
+  } = prop;
   const [categoryValue, setCategoryValue] = useState(categoryData);
 
-
-  useEffect(()=>{
-    if(resetUpdateStatus){
-      setCategoryValue(categoryData)
-      onResetUpdate(false)
+  useEffect(() => {
+    if (resetUpdateStatus) {
+      setCategoryValue(categoryData);
+      onResetUpdate(false);
     }
-  }, [resetUpdateStatus])
-
-
+  }, [resetUpdateStatus]);
 
   function handleChangeValue(event) {
     setCategoryValue(event.target.value);
@@ -22,7 +24,7 @@ function CategoryDataCounter(prop) {
 
   function handleIncreaseValue() {
     setCategoryValue(Number(categoryValue) + 1);
-    console.log(Number(categoryValue) + 1, 'we increase need value')
+    console.log(Number(categoryValue) + 1, "we increase need value");
     onChangeCategoryData(Number(categoryValue) + 1);
   }
 
@@ -33,34 +35,35 @@ function CategoryDataCounter(prop) {
   return (
     <div className="data-field">
       <button onClick={handleDecreaseValue}>-</button>
-      <input
-        value={categoryValue}
-        onChange={handleChangeValue}
-      />
+      <input value={categoryValue} onChange={handleChangeValue} />
       <button onClick={handleIncreaseValue}>+</button>
     </div>
   );
 }
 
 function CategoryCardItem(prop) {
-  const { resetUpdateStatus, onResetUpdate, onChangeCategoryData, key } = prop
-  const [ id, itemData ] = prop.itemData;
-  const {name, value, currency} = itemData;
+  const {
+    resetUpdateStatus,
+    onResetUpdate,
+    onChangeCategoryData,
+    id,
+    name,
+    value,
+  } = prop;
 
+  //console.log(prop);
 
-
-
-  function handleUpdatedValue(value){
+  function handleUpdatedValue(value) {
     onChangeCategoryData({
-      id, value
-    })
+      id,
+      value,
+    });
   }
 
   /*
   then we can to add new functions, that will handle not only changed category value but also
   name/curryncy and other
   */
-
 
   return (
     <div className="card-item">
@@ -69,10 +72,21 @@ function CategoryCardItem(prop) {
         categoryData={value}
         resetUpdateStatus={resetUpdateStatus}
         onResetUpdate={onResetUpdate}
-        onChangeCategoryData={ handleUpdatedValue}
+        onChangeCategoryData={handleUpdatedValue}
       />
     </div>
   );
 }
 
-export default CategoryCardItem;
+export default memo(CategoryCardItem, (prevProps, nextProps) => {
+  console.log( prevProps.resetUpdateStatus, 'prevProps.resetUpdateStatus', nextProps.resetUpdateStatus, 'nextProps.resetStatus')
+  return (
+    prevProps.value == nextProps.value &&
+    prevProps.id==nextProps.id &&
+    prevProps.currency==nextProps.currency &&
+    prevProps.name==nextProps.name &&
+    prevProps.resetUpdateStatus==nextProps.resetUpdateStatus &&
+    typeof prevProps.onResetUpdate === "function" &&
+    typeof nextProps.onChangeCategoryData === "function"
+  );
+});

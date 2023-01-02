@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo, useMemo, useCallback } from "react";
 import "./CategoryCard.scss";
-import cancelIcon from "../../../assets/icons/cancel-svgrepo-com.svg";
 import CategoryCardItem from "../category-card-item/CategoryCardItem";
 import CreaterCategoryCardItem from "../category-card-item/CreaterCategoryCardItem";
 import CancellIconButton from "../../buttons/cancel-icon/CancelIconButton";
 import YesNoButtons from "../../buttons/button/YesNoButtons/YesNoButtons";
-import { asyncFetchUserDataAction, asyncAddNewDataAction} from "../../../store/saga/data-update/index";
+import {
+  asyncFetchUserDataAction,
+  asyncAddNewDataAction,
+} from "../../../store/saga/data-update/index";
 import { useDispatch } from "react-redux";
 
 function CategoryCard(prop) {
@@ -14,14 +16,16 @@ function CategoryCard(prop) {
   const [updatedData, setUpdatedData] = useState({ categoryName });
 
   const changedResult = { categoryName };
-  const handledCategoryItems = Object.entries(categoryItems);
   const dispatch = useDispatch();
+
+  const handledCategoryItems = useMemo(() => {
+    return Object.entries(categoryItems);
+  }, [categoryItems]);
 
   // status not updated by default
   const [resetStatus, setResetStatus] = useState(false);
 
   function handleCategoriesChanges(value) {
-    console.log(value, "resived changed data");
     if (!isCategoriesUpdated) {
       setCategoryUpdatedStatus(true);
     }
@@ -33,13 +37,13 @@ function CategoryCard(prop) {
     }
 
     setUpdatedData(changedResult);
-    console.log(changedResult, "edited data");
   }
 
   function updateResetStatus(status) {
+    console.log(status, 'pay atention')
     setResetStatus(status);
   }
-
+  
   function handleCancellUpdate() {
     setCategoryUpdatedStatus(false);
     setResetStatus(true);
@@ -48,12 +52,19 @@ function CategoryCard(prop) {
   function handleApproveUpdate() {
     dispatch(asyncFetchUserDataAction(updatedData));
   }
-  function handleCategoriesCreation(value){
-    dispatch(asyncAddNewDataAction({
-      userId: 'user1',
-      ...value,
-      categoryName,
-    }))
+
+
+
+
+
+  function handleCategoriesCreation(value) {
+    dispatch(
+      asyncAddNewDataAction({
+        userId: "user1",
+        ...value,
+        categoryName,
+      })
+    );
   }
 
   return (
@@ -62,11 +73,13 @@ function CategoryCard(prop) {
         <CancellIconButton onClose={onWatchStatusChange} />
       </div>
       <div className="category-card__items-container">
-        {handledCategoryItems.map((item) => (
-          <div key={item[0]}>
+        {handledCategoryItems.map(([id, { currency, name, value }]) => (
+          <div key={id}>
             <CategoryCardItem
-              key={item[0]}
-              itemData={item}
+              id={id}
+              currency={currency}
+              name={name}
+              value={value}
               resetUpdateStatus={resetStatus}
               onChangeCategoryData={handleCategoriesChanges}
               onResetUpdate={updateResetStatus}
@@ -86,4 +99,4 @@ function CategoryCard(prop) {
   );
 }
 
-export default CategoryCard;
+export default memo(CategoryCard);
