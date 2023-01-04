@@ -1,5 +1,4 @@
 import React from "react";
-import { useState, useRef, useEffect, memo, useMemo } from "react";
 import "./YesNoButtons.scss";
 
 function YesNoButtons(props) {
@@ -15,9 +14,4 @@ function YesNoButtons(props) {
   );
 }
 
-export default memo(YesNoButtons, (prevProps, nextProps) => {
-  return (
-    typeof prevProps.onApproveUpdate === "function" &&
-    typeof nextProps.onCancellUpdate === "function"
-  );
-});
+export default YesNoButtons

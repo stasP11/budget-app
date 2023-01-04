@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import "./CardItem.scss";
 
 function CategoryCardTemplate(prop) {
-  const {onItemCreation} = prop
+  const { onItemCreation } = prop;
   let nameRef = useRef();
   let valueRef = useRef();
 
@@ -41,20 +41,22 @@ function CategoryCardTemplate(prop) {
   );
 }
 
-function CreaterCategoryCardItem(prop) {
-  const { onCreateItem } = prop
+function CreateCardItem(prop) {
+  // in future there shoud be added error handler
+
+  const { onCreatedNewItem } = prop;
   const [isClicked, setIsClicked] = useState(false);
-  const [itemData, setItemData] = useState({});
 
   function onClickAddButton() {
     setIsClicked((currentisClicked) => (currentisClicked = !currentisClicked));
   }
 
-  function handleCreationItem(value){
-    if(value){
-    onCreateItem(value)
+  function handleCreationItem(value) {
+    if (value) {
+      onCreatedNewItem(value);
+      onClickAddButton();
     } else {
-      onClickAddButton()
+      onClickAddButton();
     }
   }
 
@@ -64,11 +66,11 @@ function CreaterCategoryCardItem(prop) {
         <CategoryCardTemplate onItemCreation={handleCreationItem} />
       ) : (
         <div className="creator-category__add-button">
-          <p onClick={onClickAddButton}>|+|</p>
+          <p onClick={onClickAddButton}>+</p>
         </div>
       )}
     </div>
   );
 }
 
-export default CreaterCategoryCardItem;
+export default CreateCardItem;

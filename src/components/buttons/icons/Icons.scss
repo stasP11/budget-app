@@ -1,0 +1,16 @@
+@mixin icon-sizes($width, $height){
+    width: $width;
+    height: $height;
+}
+
+.cancell-icon {
+  >.small {
+ @include icon-sizes(14px, 14px);
+  }
+  >.midlle {
+    @include icon-sizes(20px, 20px);
+  }
+  >.large {
+    @include icon-sizes(26px, 26px);
+  }
+}

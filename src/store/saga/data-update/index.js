@@ -5,7 +5,7 @@ import { allUserData } from "../../../servises/axios/get-all-data";
 // worker
 function* updateUserData(action) {
   try {
-    const userData = yield call(allUserData.updateUserData, {id: 'user1',  ...action.payload});
+    const userData = yield call(allUserData.updateUserData2, {id: 'user1',  ...action.payload});
     yield put({ type: "USER_DATA_UPDATE", payload: userData });
   } catch (e) {
     yield put({ type: "USER_FETCH_FAILED", message: e.message });
@@ -19,7 +19,6 @@ export function* watchUpdateUserData() {
 
 //async action
 export function asyncFetchUserDataAction(updatedUser) {
-  console.log(updatedUser, 'dispatched data')
   return { type: "USER_DATA_UPDATE_REQUESTED", payload: updatedUser };
 }
 
@@ -27,9 +26,8 @@ export function asyncFetchUserDataAction(updatedUser) {
 // add new category/item
 
 function* addNewUserData(action) {
-  console.log(action)
   try {
-    const userData = yield call(allUserData.addNewData, {id: 'user1',  ...action.payload});
+    const userData = yield call(allUserData.addNewData2, {id: 'user1',  ...action.payload});
    yield put({ type: "USER_DATA_ADD", payload: userData });
   } catch (e) {
     yield put({ type: "USER_FETCH_FAILED", message: e.message });
@@ -43,6 +41,5 @@ export function* watchAddNewUserData() {
 
 //async action
 export function asyncAddNewDataAction(updatedUser) {
-  console.log(updatedUser, 'dispatched data')
   return { type: "USER_DATA_ADD_REQUESTED", payload: updatedUser };
 }

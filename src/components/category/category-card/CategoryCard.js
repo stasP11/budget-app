@@ -1,102 +1,93 @@
-import { useState, useRef, useEffect, memo, useMemo, useCallback } from "react";
 import "./CategoryCard.scss";
+import { useState, useEffect } from "react";
 import CategoryCardItem from "../category-card-item/CategoryCardItem";
-import CreaterCategoryCardItem from "../category-card-item/CreaterCategoryCardItem";
-import CancellIconButton from "../../buttons/cancel-icon/CancelIconButton";
+import CreateCardItem from "../category-card-item/CreaterCategoryCardItem";
+import { CancellIcon } from "../../buttons/icons/Icons";
 import YesNoButtons from "../../buttons/button/YesNoButtons/YesNoButtons";
 import {
   asyncFetchUserDataAction,
   asyncAddNewDataAction,
 } from "../../../store/saga/data-update/index";
 import { useDispatch } from "react-redux";
+import { generateID } from "../../../servises/helpers-functions/utils/utils";
 
-function CategoryCard(prop) {
-  const { categoryItems, onWatchStatusChange, categoryName } = prop;
-  const [isCategoriesUpdated, setCategoryUpdatedStatus] = useState(false);
-  const [updatedData, setUpdatedData] = useState({ categoryName });
+function updateArr(arr, id, newData) {
+  return arr.map((item) => {
+    if (item.id === id) {
+      return { ...item, value: newData };
+    }
+    return item;
+  });
+}
 
-  const changedResult = { categoryName };
+function Card(prop) {
+  const { onReset, categoryData } = prop;
+  const { id, categoryItems, categoryName } = categoryData;
+
   const dispatch = useDispatch();
 
-  const handledCategoryItems = useMemo(() => {
-    return Object.entries(categoryItems);
+  const [itemsState, setItemsState] = useState(categoryItems);
+  const [isUpdatedValue, setIsUpdatedValue] = useState(false);
+
+  useEffect(() => {
+    setItemsState(categoryItems);
   }, [categoryItems]);
 
-  // status not updated by default
-  const [resetStatus, setResetStatus] = useState(false);
+  function handleChangeValue(...prop) {
+    const [id, newData] = prop;
 
-  function handleCategoriesChanges(value) {
-    if (!isCategoriesUpdated) {
-      setCategoryUpdatedStatus(true);
+    setItemsState(updateArr(itemsState, id, newData));
+    if (!isUpdatedValue) {
+      setIsUpdatedValue(true);
     }
-
-    if (changedResult[value.id]) {
-      changedResult[value.id] = { ...changedResult[value.id], ...value };
-    } else {
-      changedResult[value.id] = { ...value };
-    }
-
-    setUpdatedData(changedResult);
   }
 
-  function updateResetStatus(status) {
-    console.log(status, 'pay atention')
-    setResetStatus(status);
-  }
-  
   function handleCancellUpdate() {
-    setCategoryUpdatedStatus(false);
-    setResetStatus(true);
+    setItemsState(categoryItems);
+    setIsUpdatedValue(false);
   }
 
   function handleApproveUpdate() {
-    dispatch(asyncFetchUserDataAction(updatedData));
+    dispatch(asyncFetchUserDataAction({ id, itemsState }));
+    setIsUpdatedValue(false);
   }
 
+  function handleCreatingCardItem(value) {
+    const itemData = { ...value, id: generateID(), currency: "EUR" };
+    dispatch(asyncAddNewDataAction({ id, itemData }));
+  }
 
-
-
-
-  function handleCategoriesCreation(value) {
-    dispatch(
-      asyncAddNewDataAction({
-        userId: "user1",
-        ...value,
-        categoryName,
-      })
+  const itemsList = itemsState.map(({ id, name, value }) => {
+    return (
+      <div key={id}>
+        <CategoryCardItem
+          itemId={id}
+          name={name}
+          value={value}
+          onChangeValue={handleChangeValue}
+        />
+      </div>
     );
-  }
+  });
 
   return (
     <div className="category-card">
-      <div className="category-card__header">
-        <CancellIconButton onClose={onWatchStatusChange} />
+      <div className="category-card--header">
+        <div>{categoryName}</div>{" "}
+        <div>
+          <CancellIcon onReset={onReset} size="midlle" />
+        </div>
       </div>
-      <div className="category-card__items-container">
-        {handledCategoryItems.map(([id, { currency, name, value }]) => (
-          <div key={id}>
-            <CategoryCardItem
-              id={id}
-              currency={currency}
-              name={name}
-              value={value}
-              resetUpdateStatus={resetStatus}
-              onChangeCategoryData={handleCategoriesChanges}
-              onResetUpdate={updateResetStatus}
-            />
-          </div>
-        ))}
-        <CreaterCategoryCardItem onCreateItem={handleCategoriesCreation} />
-      </div>
-
-      {isCategoriesUpdated ? (
+      <div className="category-card--container">{itemsList}</div>
+      <CreateCardItem onCreatedNewItem={handleCreatingCardItem} />
+      {isUpdatedValue ? (
         <YesNoButtons
-          onApproveUpdate={handleApproveUpdate}
           onCancellUpdate={handleCancellUpdate}
+          onApproveUpdate={handleApproveUpdate}
         />
       ) : null}
     </div>
   );
 }
 
-export default memo(CategoryCard);
+export default Card;
