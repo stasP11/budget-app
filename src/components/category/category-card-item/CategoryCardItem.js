@@ -11,17 +11,14 @@ function SpendingItem(prop) {
   }, [value]);
 
   function handleChangeValue(event) {
-    console.log(itemId, "this shit is work!!! handleChangeValue");
     onChangeValue(itemId, Number(event.target.value));
   }
 
   function handleIncreaseValue() {
-    console.log(itemId, "this shit is work!!! handleChangeValue");
     onChangeValue(itemId, Number(state) + 1);
   }
 
   function handleDecreaseValue() {
-    console.log(itemId, "this shit is work!!! handleChangeValue");
     onChangeValue(itemId, Number(state) - 1);
   }
 

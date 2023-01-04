@@ -100,8 +100,6 @@ class UserData {
       cat.forEach(({ id, categoryItems }) => {
         if (id == value.id) {
           value.itemsState.forEach((obj) => {
-            console.log(categoryItems, obj, 'categoryItems, obj');
-            console.log(categoryItems[obj.id], obj);
             categoryItems[obj.id] = obj;
           });
         }
