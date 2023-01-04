@@ -1,15 +1,15 @@
 import "./CategoryButton.scss";
 
 function CategoryButton(prop) {
-  const { onWatchStatusChange, categoryName } = prop;
+  const { id, name, onButtonClick } = prop;
 
-  function changeStatus() {
-    onWatchStatusChange(categoryName);
+  function handleButtonClick() {
+    onButtonClick([id, name]);
   }
 
   return (
-    <div className="category-button" onClick={changeStatus}>
-      <p className="category-button__text">{categoryName}</p>
+    <div className="category-button" onClick={handleButtonClick}>
+      <p className="category-button__text">{name}</p>
     </div>
   );
 }

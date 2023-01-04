@@ -12,4 +12,3 @@ export function setDataInSessionStorage(key, value) {
   export function removeDataFromSessionStorage(key) {
     sessionStorage.removeItem(key);
   }
-  

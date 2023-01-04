@@ -1,95 +1,88 @@
 import CategoryButton from "../category-button/CategoryButton";
-import CategoryCard from "../category-card/CategoryCard";
+import Card from "../category-card/CategoryCard";
 import { useEffect, useState } from "react";
 import "./CategoriesContainer.scss";
 import { store } from "../../../store/index";
 import {
   setDataInSessionStorage,
-  getDataFromSessionStorage,
   removeDataFromSessionStorage,
 } from "../../../servises/helpers-functions/sessionStorage/index";
+import {
+  getCategoryItemsById,
+  getCategoryButtonData,
+  extractData,
+  useExtractedData,
+  useUserData,
+} from "./servises";
 
-function Category(data) {
-  const [activatedCategoryName, setIActivatedCategoryName] = useState(null);
-  const { time, categories } = data?.userData;
-  const openedCategoryName = getDataFromSessionStorage("openedCategory");
-
-  useEffect(() => {
-    if (openedCategoryName) {
-      setIActivatedCategoryName(openedCategoryName);
-    }
-  }, []);
-
-  function handleWatchedStatus(name) {
-    name
-      ? setDataInSessionStorage("openedCategory", name)
-      : removeDataFromSessionStorage("openedCategory");
-    setIActivatedCategoryName((cardName) => (cardName = name));
-  }
-
-  function isActivatedCard(props, updatedState) {
-    if (props == updatedState) {
-      return "activated";
-    }
-    if (openedCategoryName == props) {
-      return "activated";
-    } else return "unactivated";
-  }
-
-  const categ = categories.map((category) => {
-    const { id, categoryName, categoryItems } = category;
+function CardButtonsContainer(prop) {
+  const { time, data, onButtonClick } = prop;
+  const buttonsContainer = data.map(({ id, categoryName }) => {
     return (
-      <div
-        key={categoryName}
-        className={isActivatedCard(categoryName, activatedCategoryName)}
-      >
-        <div className="button">
-          <CategoryButton
-            categoryName={categoryName}
-            onWatchStatusChange={handleWatchedStatus}
-          />
-        </div>
-
-        {activatedCategoryName ? (
-          <div className="card">
-            <CategoryCard
-              categoryItems={categoryItems}
-              categoryName={categoryName}
-              onWatchStatusChange={handleWatchedStatus}
-            />
-          </div>
-        ) : null}
+      <div key={id}>
+        <CategoryButton
+          name={categoryName}
+          id={id}
+          onButtonClick={onButtonClick}
+        />
       </div>
     );
   });
 
-  return <>{categ}</>;
+  return (
+    <div>
+      <time>{time}</time>
+      <div className="buttons-container">{buttonsContainer}</div>
+    </div>
+  );
 }
 
 function CategoriesContainer() {
-  const userData2 = useUserData();
+  const userData2 = useUserData(store);
+  const categoryButtonsData = useExtractedData(store, getCategoryButtonData);
+  const [openedCardState, setOpenedCardState] = useState({});
 
-  function ReturnRight() {
-    let result;
-    if (userData2?.categories && userData2?.time) {
-      result = <Category userData={userData2} />;
+  useEffect(() => {
+    /*
+    here we check if the card has been opened.
+    If yes, then we get the ID and name of the opened card from the session
+    storage and through them we get the necessary data for the card
+    */
+    const data = extractData("openedCard", userData2);
+    if (data) {
+      setOpenedCardState(data);
     }
-    return <>{result}</>;
+  }, [userData2]);
+
+  function handleButtonClick([id, categoryName]) {
+    const categoryItems = getCategoryItemsById(userData2, id);
+    setOpenedCardState({ id, categoryName, categoryItems });
+    setDataInSessionStorage("openedCard", JSON.stringify({ id, categoryName }));
+  }
+
+  function handleCardReset() {
+    setOpenedCardState({});
+    removeDataFromSessionStorage("openedCard");
   }
 
   return (
-    <div className="categories">
-      <ReturnRight />
+    <div>
+      <div className="category-buttons">
+        {Object.keys(categoryButtonsData).length ? (
+          <CardButtonsContainer
+            {...categoryButtonsData}
+            onButtonClick={handleButtonClick}
+          />
+        ) : null}
+      </div>
+
+      <div className="card">
+        {Object.keys(openedCardState).length ? (
+          <Card categoryData={openedCardState} onReset={handleCardReset} />
+        ) : null}
+      </div>
     </div>
   );
 }
 
 export default CategoriesContainer;
-
-function useUserData() {
-  const [state, setState] = useState({});
-  store.subscribe(() => {
-    setState(store.getState()?.userData);
-  });
-  return state;
-}
